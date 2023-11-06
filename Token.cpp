@@ -66,8 +66,4 @@ std::string Token::toString() {
 }
 
 Token::~Token() {
-    if(type == STRING) {
-        delete literal->s;
-    }
-    delete literal;
 }
