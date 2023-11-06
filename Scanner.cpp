@@ -125,7 +125,7 @@ void Scanner::string() {
     advance();
 
     auto* literal = new Literal();
-    literal->s = new std::string(source.substr(start + 1, current - 1));
+    literal->s = new std::string(source.substr(start + 1, current - start - 2));
     addToken(STRING, literal);
 }
 
