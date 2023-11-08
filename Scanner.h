@@ -21,7 +21,7 @@ private:
     bool match(char expected);
     char peek();
     char peekNext();
-    void addToken(TokenType type, Literal* literal);
+    void addToken(TokenType type, std::shared_ptr<Literal>* literal);
     void string();
     void number();
     bool isAlpha(char c);

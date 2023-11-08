@@ -25,23 +25,17 @@ enum TokenType {
     M_EOF
 };
 
-union Literal {
-    std::string* s;
-    int    i;
-    long   l;
-    float  f;
-    double d;
-};
+typedef std::variant<std::string*, int, long, float, double> Literal;
 
 class Token {
 public:
-    Token(TokenType type, std::string lexeme, Literal* literal, int line);
+    Token(TokenType type, std::string lexeme, std::shared_ptr<Literal> literal, int line);
     ~Token();
     std::string toString();
 private:
     TokenType type;
     std::string lexeme;
-    Literal* literal;
+    std::shared_ptr<Literal> literal;
     int line;
     std::unordered_map<TokenType, std::string> tokenNameMap;
 };

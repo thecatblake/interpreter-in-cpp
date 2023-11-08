@@ -88,9 +88,9 @@ char Scanner::advance() {
     return source[current++];
 }
 
-void Scanner::addToken(TokenType type, Literal* literal) {
+void Scanner::addToken(TokenType type, std::shared_ptr<Literal>* literal) {
     std::string text = source.substr(start, current - start);
-    tokens.emplace_back(type, text, literal, line);
+    tokens.emplace_back(type, text, *literal, line);
 }
 
 bool Scanner::match(char expected) {
@@ -124,9 +124,9 @@ void Scanner::string() {
 
     advance();
 
-    auto* literal = new Literal();
-    literal->s = new std::string(source.substr(start + 1, current - start - 2));
-    addToken(STRING, literal);
+    auto literal = std::make_shared<Literal>();
+    std::get<std::string*>(*literal) = new std::string(source.substr(start + 1, current - start - 2));
+    addToken(STRING, &literal);
 }
 
 void Scanner::number() {
@@ -138,9 +138,9 @@ void Scanner::number() {
         while(isdigit(peek())) advance();
     }
 
-    auto* literal = new Literal();
-    literal->d = std::stof(source.substr(start, current));
-    addToken(NUMBER, literal);
+    auto literal = std::make_shared<Literal>();
+    std::get<double>(*literal) = std::stof(source.substr(start, current));
+    addToken(NUMBER, &literal);
 }
 
 void Scanner::identifier() {
