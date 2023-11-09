@@ -32,8 +32,8 @@ public:
     Token(TokenType type, std::string lexeme, std::shared_ptr<Literal> literal, int line);
     ~Token();
     std::string toString();
-private:
     TokenType type;
+private:
     std::string lexeme;
     std::shared_ptr<Literal> literal;
     int line;
