@@ -3,6 +3,8 @@
 //
 
 #include "Interpreter.h"
+#include "Parser.h"
+#include <sstream>
 
 bool Interpreter::hadError = false;
 
@@ -19,9 +21,13 @@ Interpreter::Interpreter(int argc, char **args) {
 
 void Interpreter::runFile(char *path) {
     std::ifstream file(path);
-    std::string source;
-    file >> source;
-    run(source);
+    file.seekg(0, std::ios::end);
+    size_t size = file.tellg();
+    std::string buffer(size, ' ');
+    file.seekg(0);
+    file.read(&buffer[0], (int)size);
+
+    run(buffer);
 
     if(hadError) exit(65);
 }
@@ -33,17 +39,24 @@ void Interpreter::runPrompt() {
 void Interpreter::run(std::string& source) {
     Scanner scanner(source);
     std::vector<Token> tokens = scanner.scanTokens();
-    for(auto & token : tokens) {
-        std::cout << token.toString() << std::endl;
-    }
+    Parser parser(tokens);
+    Expr* expression = parser.parse();
+
+    if(hadError) return;
+
+    std::cout << expression->toString() << std::endl;
 }
 
-void Interpreter::error(int line, const std::string &message) {
-    std::string where;
-    report(line, where, message);
+void Interpreter::error(Token* token, const std::string &message) {
+    if(!token)
+        report(0, "", message);
+    else if(token->type == M_EOF)
+        report(token->line, " at end", message);
+    else
+        report(token->line, " at '" + token->lexeme + "'", message);
 }
 
-void Interpreter::report(int line, std::string &where, const std::string &message) {
+void Interpreter::report(int line, const std::string &where, const std::string &message) {
     std::cout << "[line " << line << "] Error" << where << ": " << message << std::endl;
     hadError = true;
 }

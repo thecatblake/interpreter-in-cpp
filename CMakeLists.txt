@@ -12,6 +12,8 @@ add_library(interpreter
         Scanner.h
         Expr.cpp
         Expr.h
+        Parser.cpp
+        Parser.h
 )
 
 add_executable(itpt run.cpp)

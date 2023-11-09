@@ -74,7 +74,7 @@ void Scanner::scanToken() {
             if(isdigit(c)) {
                 number();
             } else {
-                Interpreter::error(line, "Unexpected character");
+                Interpreter::error(nullptr, "Unexpected character");
             }
             break;
     }
@@ -118,14 +118,13 @@ void Scanner::string() {
     }
 
     if(isAtEnd()) {
-        Interpreter::error(line, "Unterminated string.");
+        Interpreter::error(nullptr, "Unterminated string.");
         return;
     }
 
     advance();
 
-    auto literal = std::make_shared<Literal>();
-    std::get<std::string*>(*literal) = new std::string(source.substr(start + 1, current - start - 2));
+    auto literal = std::make_shared<Literal>(new std::string(source.substr(start + 1, current - start - 2)));
     addToken(STRING, literal);
 }
 
@@ -138,8 +137,7 @@ void Scanner::number() {
         while(isdigit(peek())) advance();
     }
 
-    auto literal = std::make_shared<Literal>();
-    std::get<double>(*literal) = std::stof(source.substr(start, current));
+    auto literal = std::make_shared<Literal>(std::stod(source.substr(start, current)));
     addToken(NUMBER, literal);
 }
 

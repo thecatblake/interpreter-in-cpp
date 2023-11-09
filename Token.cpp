@@ -7,7 +7,7 @@
 #include <utility>
 
 Token::Token(TokenType type, std::string lexeme, std::shared_ptr<Literal> literal, int line):
-        type(type), lexeme(std::move(lexeme)), literal(literal), line(line){
+        type(type), lexeme(std::move(lexeme)), literal(std::move(literal)), line(line){
     tokenNameMap[LEFT_PAREN] = "LEFT_PAREN";
     tokenNameMap[RIGHT_PAREN] = "RIGHT_PAREN";
     tokenNameMap[LEFT_BRACE] = "LEFT_BRACE";
@@ -58,6 +58,9 @@ std::string Token::toString() {
         case(NUMBER):
             s = std::to_string(std::get<double>(*literal));
             break;
+        case(TRUE):
+        case(FALSE):
+            s = std::to_string(std::get<bool>(*literal));
         default:
             s = "";
             break;
