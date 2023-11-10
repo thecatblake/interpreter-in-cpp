@@ -25,7 +25,7 @@ enum TokenType {
     M_EOF
 };
 
-typedef std::variant<std::string*, int, long, float, double, bool> Literal;
+typedef std::variant<std::string, int, long, float, double, bool> Literal;
 
 class Token {
 public:

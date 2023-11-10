@@ -124,7 +124,7 @@ void Scanner::string() {
 
     advance();
 
-    auto literal = std::make_shared<Literal>(new std::string(source.substr(start + 1, current - start - 2)));
+    auto literal = std::make_shared<Literal>(source.substr(start + 1, current - start - 2));
     addToken(STRING, literal);
 }
 

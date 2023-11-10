@@ -53,7 +53,7 @@ std::string Token::toString() {
     std::string s;
     switch(type) {
         case(STRING):
-            s = *std::get<std::string*>(*literal);
+            s = std::get<std::string>(*literal);
             break;
         case(NUMBER):
             s = std::to_string(std::get<double>(*literal));

@@ -7,6 +7,7 @@
 #include <sstream>
 
 bool Interpreter::hadError = false;
+bool Interpreter::hadRuntimeError = false;
 
 Interpreter::Interpreter(int argc, char **args) {
     if(argc > 2) {
@@ -30,6 +31,7 @@ void Interpreter::runFile(char *path) {
     run(buffer);
 
     if(hadError) exit(65);
+    if(hadRuntimeError) exit(70);
 }
 
 void Interpreter::runPrompt() {
@@ -41,10 +43,7 @@ void Interpreter::run(std::string& source) {
     std::vector<Token> tokens = scanner.scanTokens();
     Parser parser(tokens);
     Expr* expression = parser.parse();
-
-    if(hadError) return;
-
-    std::cout << expression->toString() << std::endl;
+    interpret(expression);
 }
 
 void Interpreter::error(Token* token, const std::string &message) {
@@ -59,4 +58,27 @@ void Interpreter::error(Token* token, const std::string &message) {
 void Interpreter::report(int line, const std::string &where, const std::string &message) {
     std::cout << "[line " << line << "] Error" << where << ": " << message << std::endl;
     hadError = true;
+}
+
+void Interpreter::interpret(Expr *expression) {
+    try {
+        auto value = *expression->evaluate();
+        std::cout << stringify(value) << std::endl;
+    } catch(const RuntimeError& err) {
+        Interpreter::runtimeError(err);
+    }
+}
+
+void Interpreter::runtimeError(const RuntimeError &error) {
+    std::cout << error.what() << "\n[line " << error.token->line << "]" << std::endl;
+    hadRuntimeError = true;
+}
+
+std::string Interpreter::stringify(Literal &literal) {
+    if(std::holds_alternative<double>(literal))
+        return std::to_string(std::get<double>(literal));
+    if(std::holds_alternative<std::string>(literal))
+        return std::get<std::string>(literal);
+    if(std::holds_alternative<bool>(literal))
+        return std::to_string(std::get<bool>(literal));
 }

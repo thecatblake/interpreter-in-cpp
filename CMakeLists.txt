@@ -14,6 +14,8 @@ add_library(interpreter
         Expr.h
         Parser.cpp
         Parser.h
+        RuntimeError.cpp
+        RuntimeError.h
 )
 
 add_executable(itpt run.cpp)
