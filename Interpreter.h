@@ -10,6 +10,7 @@
 #include "Scanner.h"
 #include "Expr.h"
 #include "RuntimeError.h"
+#include "Stmt.h"
 
 class Interpreter {
 public:
@@ -23,8 +24,7 @@ private:
     void runFile(char* path);
     void runPrompt();
     void run(std::string& source);
-    void interpret(Expr* expression);
-    std::string stringify(Literal& literal);
+    void interpret(std::vector<std::unique_ptr<Stmt>>& statements);
 };
 
 

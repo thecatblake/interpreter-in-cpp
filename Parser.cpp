@@ -148,11 +148,30 @@ void Parser::synchronize() {
     }
 }
 
-Expr *Parser::parse() {
-    try {
-        return expression();
-    } catch (const ParserError& e) {
-        return nullptr;
+std::vector<std::unique_ptr<Stmt>> Parser::parse() {
+    std::vector<std::unique_ptr<Stmt>> statements;
+    while(!isAtEnd()) {
+        statements.push_back(statement());
     }
+
+    return statements;
+}
+
+std::unique_ptr<Stmt> Parser::statement() {
+    if(match({PRINT})) return printStatement();
+
+    return expressionStatement();
+}
+
+std::unique_ptr<Stmt> Parser::printStatement() {
+    Expr* value = expression();
+    consume(SEMICOLON, "Expect ';' after value.");
+    return std::make_unique<PrintStmt>(value);
+}
+
+std::unique_ptr<Stmt> Parser::expressionStatement() {
+    Expr* expr = expression();
+    consume(SEMICOLON, "Expect ';' after value.");
+    return std::make_unique<ExprStmt>(expr);
 }
 

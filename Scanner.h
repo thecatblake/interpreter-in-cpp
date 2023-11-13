@@ -9,6 +9,7 @@
 #include <utility>
 #include "Token.h"
 #include "Interpreter.h"
+#include "Literal.h"
 
 class Scanner {
 public:

@@ -42,8 +42,11 @@ void Interpreter::run(std::string& source) {
     Scanner scanner(source);
     std::vector<Token> tokens = scanner.scanTokens();
     Parser parser(tokens);
-    Expr* expression = parser.parse();
-    interpret(expression);
+    auto statements = parser.parse();
+
+    if(hadError) return;
+
+    interpret(statements);
 }
 
 void Interpreter::error(Token* token, const std::string &message) {
@@ -60,10 +63,11 @@ void Interpreter::report(int line, const std::string &where, const std::string &
     hadError = true;
 }
 
-void Interpreter::interpret(Expr *expression) {
+void Interpreter::interpret(std::vector<std::unique_ptr<Stmt>>& statements) {
     try {
-        auto value = *expression->evaluate();
-        std::cout << stringify(value) << std::endl;
+        for (auto & statement : statements) {
+            statement->execute();
+        }
     } catch(const RuntimeError& err) {
         Interpreter::runtimeError(err);
     }
@@ -72,13 +76,4 @@ void Interpreter::interpret(Expr *expression) {
 void Interpreter::runtimeError(const RuntimeError &error) {
     std::cout << error.what() << "\n[line " << error.token->line << "]" << std::endl;
     hadRuntimeError = true;
-}
-
-std::string Interpreter::stringify(Literal &literal) {
-    if(std::holds_alternative<double>(literal))
-        return std::to_string(std::get<double>(literal));
-    if(std::holds_alternative<std::string>(literal))
-        return std::get<std::string>(literal);
-    if(std::holds_alternative<bool>(literal))
-        return std::to_string(std::get<bool>(literal));
 }

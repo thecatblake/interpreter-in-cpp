@@ -8,6 +8,7 @@
 #include "Token.h"
 #include "Expr.h"
 #include "Interpreter.h"
+#include "Stmt.h"
 
 class ParserError : public std::runtime_error {
     std::string what_message;
@@ -22,7 +23,7 @@ public:
 class Parser {
 public:
     Parser(std::vector<Token>& tokens): tokens(tokens) {}
-    Expr* parse();
+    std::vector<std::unique_ptr<Stmt>> parse();
 private:
     Expr* expression();
     Expr* equality();
@@ -40,6 +41,10 @@ private:
     bool isAtEnd();
     ParserError error(Token* token, const char* message);
     void synchronize();
+
+    std::unique_ptr<Stmt> statement();
+    std::unique_ptr<Stmt> printStatement();
+    std::unique_ptr<Stmt> expressionStatement();
 
     std::vector<Token> tokens;
     int current = 0;

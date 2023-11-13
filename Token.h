@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <unordered_map>
+#include "Literal.h"
 
 enum TokenType {
     LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE,
@@ -24,8 +25,6 @@ enum TokenType {
 
     M_EOF
 };
-
-typedef std::variant<std::string, int, long, float, double, bool> Literal;
 
 class Token {
 public:

@@ -74,7 +74,7 @@ void Scanner::scanToken() {
             if(isdigit(c)) {
                 number();
             } else {
-                Interpreter::error(nullptr, "Unexpected character");
+                identifier();
             }
             break;
     }
